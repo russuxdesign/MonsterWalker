@@ -14,7 +14,7 @@
 :root{--gold:#f5c542;--dark:#0a0018;--orange:#e85d04;--green:#38b000;--red:#d62828;--cyan:#48cae4}
 html,body{height:100%;overflow:hidden;background:#000}
 body{display:flex;justify-content:center}
-#app{width:100%;max-width:430px;height:100vh;position:relative;overflow:hidden;background:var(--dark);font-family:'Press Start 2P',monospace}
+#app{width:100%;max-width:430px;height:100vh;height:100dvh;position:relative;overflow:hidden;background:var(--dark);font-family:'Press Start 2P',monospace}
 .screen{position:absolute;inset:0;display:none;flex-direction:column}
 .screen.active{display:flex}
 
@@ -87,24 +87,46 @@ body{display:flex;justify-content:center}
 .xp-wrap{height:16px;background:rgba(0,0,0,.5);border:2px solid var(--gold);border-radius:3px;overflow:hidden;position:relative}
 .xp-fill{height:100%;background:linear-gradient(90deg,#38b000,#70e000);transition:width .3s;box-shadow:0 0 6px #70e00080}
 .xp-lbl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;text-shadow:1px 1px 0 #000;z-index:1}
-.walk-btns{position:absolute;bottom:0;left:0;right:0;z-index:20;padding:14px;gap:10px;
-  display:flex;flex-direction:column;background:linear-gradient(0deg,rgba(0,0,0,.85) 0%,transparent 100%)}
+.walk-btns{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;
+  z-index:20;padding:14px;gap:10px;
+  display:flex;flex-direction:column;
+  background:linear-gradient(0deg,rgba(0,0,0,.92) 0%,rgba(0,0,0,.6) 85%,transparent 100%);
+  /* Safe area inset for phones with home bar (iPhone etc) */
+  padding-bottom:max(14px, env(safe-area-inset-bottom));
+}
 .fight-btn{background:linear-gradient(180deg,#e85d04,#c94d00);border:none;border-bottom:4px solid #9a3700;
   color:#fff;font-family:'Press Start 2P',monospace;font-size:12px;padding:16px;
   cursor:pointer;border-radius:4px;letter-spacing:1px;width:100%;text-shadow:1px 1px 0 rgba(0,0,0,.5)}
 .fight-btn:active{transform:translateY(3px);border-bottom-width:1px}
+/* Walk screen back: absolute, clears the HUD which is ~80px tall */
 .float-back{
-  position:absolute;top:12px;left:12px;z-index:30;
+  position:absolute;top:88px;left:12px;z-index:30;
   background:rgba(0,0,0,.65);border:2px solid rgba(255,255,255,.3);
   color:rgba(255,255,255,.8);font-family:'Press Start 2P',monospace;
   font-size:10px;padding:8px 12px;cursor:pointer;border-radius:6px;
   backdrop-filter:blur(4px);
 }
 .float-back:active{background:rgba(255,255,255,.15)}
+/* Battle screen back: normal flow row so it sits below b-hud naturally */
+.battle-back-row{
+  padding:8px 12px 0;
+  flex-shrink:0;
+  background:transparent;
+}
+.battle-back-btn{
+  background:rgba(0,0,0,.65);border:2px solid rgba(255,255,255,.3);
+  color:rgba(255,255,255,.8);font-family:'Press Start 2P',monospace;
+  font-size:10px;padding:8px 12px;cursor:pointer;border-radius:6px;
+  backdrop-filter:blur(4px);
+}
+.battle-back-btn:active{background:rgba(255,255,255,.15)}
 .back-btn{background:transparent;border:2px solid rgba(255,255,255,.25);
   color:rgba(255,255,255,.55);font-family:'Press Start 2P',monospace;
   font-size:10px;padding:10px;cursor:pointer;border-radius:4px;width:100%}
 .back-btn:active{background:rgba(255,255,255,.1)}
+.walk-screen-pad{height:120px;flex-shrink:0}
 .evo-overlay{position:absolute;inset:0;z-index:100;opacity:0;pointer-events:none;
   display:flex;flex-direction:column;align-items:center;justify-content:center}
 .evo-overlay.on{opacity:1;pointer-events:all;background:rgba(0,0,0,.88);animation:eflash .6s ease-out}
@@ -231,6 +253,7 @@ body{display:flex;justify-content:center}
   <div class="walk-btns">
     <button class="fight-btn" onclick="goBattle()">⚔ FIGHT A FRIEND ⚔</button>
   </div>
+  <div class="walk-screen-pad"></div>
   <div class="evo-overlay" id="evo">
     <div class="evo-txt">✨ EVOLVING! ✨<br><span id="evo-name"></span></div>
   </div>
@@ -251,7 +274,7 @@ body{display:flex;justify-content:center}
       <div class="step-lbl">CPU: <span id="be-steps">0</span></div>
     </div>
   </div>
-  <button class="float-back" onclick="goWalk()">◀</button>
+  <div class="battle-back-row"><button class="battle-back-btn" onclick="goWalk()">◀</button></div>
   <div class="b-arena">
     <div class="arena-bg"></div>
     <div class="arena-stars" id="arena-sf"></div>
